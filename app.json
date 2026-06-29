@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Daily Words",
+    "name": "Rheo Example Expo",
     "slug": "rheo-example",
     "scheme": "rheo-example",
     "version": "0.1.0",
@@ -9,7 +9,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.miudigital.sugarpal", // for testing paywall
+      "bundleIdentifier": "com.getrheo.rheoexampleexpo", // for testing paywall
       "infoPlist": {
         "NSCameraUsageDescription": "This example demonstrates Rheo OS permission onboarding flows.",
         "NSMicrophoneUsageDescription": "This example demonstrates Rheo OS permission onboarding flows.",
