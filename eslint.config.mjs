@@ -3,7 +3,7 @@ import { baseConfig } from '@rheo/config/eslint.js';
 export default [
   ...baseConfig,
   {
-    ignores: ['.expo/**', 'ios/**', 'android/**', 'dist/**'],
+    ignores: ['packages/**', 'scripts/**', '.expo/**', 'ios/**', 'android/**', 'dist/**'],
   },
   {
     files: ['babel.config.js', 'metro.config.js'],
