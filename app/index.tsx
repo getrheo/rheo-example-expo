@@ -20,7 +20,7 @@ import {
 
 import { prepareAppsFlyerForFlow } from '../lib/appsFlyerBootstrap';
 import { ManifestPrefetchPanel } from '../lib/manifestPrefetchPanel';
-import { canStartExampleConfig, EXAMPLE_CONFIG_STORAGE_KEY, type SavedConfig } from '../lib/exampleRheoConfig';
+import { canStartExampleConfig, DEFAULT_API_URL, EXAMPLE_CONFIG_STORAGE_KEY, type SavedConfig } from '../lib/exampleRheoConfig';
 import { useExampleRheoShell } from '../lib/rheoExampleShell';
 
 const STORAGE_KEY = EXAMPLE_CONFIG_STORAGE_KEY;
@@ -41,9 +41,6 @@ const formatAttrValue = (v: unknown): string => {
 };
 
 export type { SavedConfig } from '../lib/exampleRheoConfig';
-
-const DEFAULT_API_URL =
-  process.env.EXPO_PUBLIC_API_BASE_URL ?? 'http://localhost:4000';
 
 const envTrim = (v: string | undefined) => v?.trim() ?? '';
 
@@ -410,8 +407,8 @@ const ConfigScreen = () => {
           label="API base URL"
           value={config.apiBaseUrl}
           onChangeText={(v) => setConfig((c) => ({ ...c, apiBaseUrl: v }))}
-          placeholder="http://localhost:4000"
-          hint="iOS simulator: http://localhost:4000. Android emulator: http://10.0.2.2:4000."
+          placeholder="https://api.getrheo.io"
+          hint="Default is production. Local API: iOS sim http://localhost:4000, Android emulator http://10.0.2.2:4000."
         />
 
         <Field

@@ -1,6 +1,10 @@
 import type { RheoConfig } from '@getrheo/react-native-expo';
+import { RHEO_DEFAULT_SDK_API_BASE_URL } from '@getrheo/contracts/sdk';
 
 export const EXAMPLE_CONFIG_STORAGE_KEY = 'rheo.exampleConfig.v1';
+
+export const DEFAULT_API_URL =
+  process.env.EXPO_PUBLIC_API_BASE_URL ?? RHEO_DEFAULT_SDK_API_BASE_URL;
 
 export type SavedConfig = {
   publishableKey: string;
