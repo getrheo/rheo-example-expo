@@ -9,7 +9,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.getrheo.rheoexampleexpo", // for testing paywall
+      "bundleIdentifier": "com.getrheo.rheoexampleexpo", 
       "infoPlist": {
         "NSCameraUsageDescription": "This example demonstrates Rheo OS permission onboarding flows.",
         "NSMicrophoneUsageDescription": "This example demonstrates Rheo OS permission onboarding flows.",
@@ -19,7 +19,7 @@
       }
     },
     "android": {
-      "package": "com.miudigital.sugarpal", // for testing paywall
+      "package": "com.getrheo.rheoexampleexpo", 
       "adaptiveIcon": {
         "backgroundColor": "#0a0a0a"
       },
