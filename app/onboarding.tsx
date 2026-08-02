@@ -17,6 +17,7 @@ import {
   EXAMPLE_CONFIG_STORAGE_KEY,
   type SavedConfig,
 } from '../lib/exampleRheoConfig';
+import ExternalSurfaceTest from './externalSurfaceTest';
 
 const OnboardingRoute = () => {
   const colorScheme = useColorScheme();
@@ -130,6 +131,9 @@ const OnboardingRoute = () => {
         onFlowCompleted={handleFlowCompleted}
         onOAuthLogin={handleOAuthLogin}
         onEmailPasswordAuth={handleEmailPasswordAuth}
+        externalSurfaces={{
+          external_1: ExternalSurfaceTest,
+        }}
       />
     </View>
   );
