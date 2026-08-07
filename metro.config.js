@@ -50,6 +50,25 @@ config.resolver.disableHierarchicalLookup = true;
 // those to the `.ts` files in the workspace (no prebuild dist for local dev).
 const defaultResolveRequest = config.resolver.resolveRequest;
 
+// expo-superwall@1.2 exports `./compat` with only an `import` condition (no `require` /
+// `default`). Metro's require() then fails with "Cannot find module 'expo-superwall/compat'".
+// Map to the real files so host bootstrap + Rheo's presentSuperwallPaywall can load.
+const resolveExpoSuperwallFile = (subpath) => {
+  try {
+    const pkgJson = require.resolve('expo-superwall/package.json', {
+      paths: [projectRoot, monorepoRoot],
+    });
+    // exports maps `./package.json` → `build/package.json`
+    const packageRoot = path.resolve(path.dirname(pkgJson), '..');
+    if (subpath === 'compat') {
+      return path.join(packageRoot, 'build/src/compat/index.js');
+    }
+    return path.join(packageRoot, 'build/src/index.js');
+  } catch {
+    return null;
+  }
+};
+
 config.resolver.resolveRequest = (context, moduleName, platform) => {
   const resolveModule = (name) => {
     if (defaultResolveRequest) {
@@ -58,18 +77,48 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
     return resolve(context, name, platform);
   };
 
+  // With disableHierarchicalLookup, nested deps (e.g. reanimated's semver@7 while
+  // the workspace root hoists babel's semver@6) are invisible. Fall back to Node
+  // resolution from the importing file so those nested installs still resolve.
+  const resolveWithNestedFallback = (name) => {
+    try {
+      return resolveModule(name);
+    } catch (firstError) {
+      if (!context.originModulePath || name.startsWith('.') || name.startsWith('/')) {
+        throw firstError;
+      }
+      try {
+        const filePath = require.resolve(name, {
+          paths: [path.dirname(context.originModulePath)],
+        });
+        return { type: 'sourceFile', filePath };
+      } catch {
+        throw firstError;
+      }
+    }
+  };
+
+  if (moduleName === 'expo-superwall/compat' || moduleName === 'expo-superwall') {
+    const filePath = resolveExpoSuperwallFile(
+      moduleName === 'expo-superwall/compat' ? 'compat' : 'main',
+    );
+    if (filePath) {
+      return { type: 'sourceFile', filePath };
+    }
+  }
+
   if (moduleName.startsWith('.') && moduleName.endsWith('.js')) {
     const base = moduleName.slice(0, -3);
     for (const candidate of [`${base}.ts`, `${base}.tsx`, base]) {
       try {
-        return resolveModule(candidate);
+        return resolveWithNestedFallback(candidate);
       } catch {
         // try next candidate
       }
     }
   }
 
-  return resolveModule(moduleName);
+  return resolveWithNestedFallback(moduleName);
 };
 
 module.exports = config;

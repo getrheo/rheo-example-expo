@@ -5,6 +5,7 @@ web-build/
 .env
 
 ios
+android
 
 # Native build outputs
 ios/Pods/
