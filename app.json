@@ -9,17 +9,18 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.getrheo.rheoexampleexpo", 
+      "bundleIdentifier": "com.getrheo.rheoexampleexpo",
       "infoPlist": {
         "NSCameraUsageDescription": "This example demonstrates Rheo OS permission onboarding flows.",
         "NSMicrophoneUsageDescription": "This example demonstrates Rheo OS permission onboarding flows.",
         "NSPhotoLibraryUsageDescription": "This example demonstrates Rheo OS permission onboarding flows.",
         "NSContactsUsageDescription": "This example demonstrates Rheo OS permission onboarding flows.",
         "NSCalendarsFullAccessUsageDescription": "This example demonstrates Rheo OS permission onboarding flows."
-      }
+      },
+      "appleTeamId": "U5FHQCWR8L"
     },
     "android": {
-      "package": "com.getrheo.rheoexampleexpo", 
+      "package": "com.getrheo.rheoexampleexpo",
       "adaptiveIcon": {
         "backgroundColor": "#0a0a0a"
       },

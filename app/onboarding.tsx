@@ -13,6 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { OfflineResolveFallback } from '../lib/offlineResolveFallback';
 import { prepareAppsFlyerForFlow } from '../lib/appsFlyerBootstrap';
 import { prepareRevenueCatForFlow } from '../lib/revenueCatBootstrap';
+import { prepareSuperwallForFlow } from '../lib/superwallBootstrap';
 import {
   EXAMPLE_CONFIG_STORAGE_KEY,
   type SavedConfig,
@@ -47,6 +48,11 @@ const OnboardingRoute = () => {
           await prepareRevenueCatForFlow(parsed.userId || 'example-user');
         } catch (err) {
           console.warn('[rheo-example] RevenueCat bootstrap failed:', err);
+        }
+        try {
+          await prepareSuperwallForFlow(parsed.userId || 'example-user');
+        } catch (err) {
+          console.warn('[rheo-example] Superwall bootstrap failed:', err);
         }
         try {
           await prepareAppsFlyerForFlow(parsed.userId || 'example-user');

@@ -20,7 +20,13 @@ import {
 
 import { prepareAppsFlyerForFlow } from '../lib/appsFlyerBootstrap';
 import { ManifestPrefetchPanel } from '../lib/manifestPrefetchPanel';
-import { canStartExampleConfig, DEFAULT_API_URL, EXAMPLE_CONFIG_STORAGE_KEY, type SavedConfig } from '../lib/exampleRheoConfig';
+import {
+  canStartExampleConfig,
+  DEFAULT_API_URL,
+  EXAMPLE_CONFIG_STORAGE_KEY,
+  resolveApiBaseUrlForPlatform,
+  type SavedConfig,
+} from '../lib/exampleRheoConfig';
 import { useExampleRheoShell } from '../lib/rheoExampleShell';
 
 const STORAGE_KEY = EXAMPLE_CONFIG_STORAGE_KEY;
@@ -92,6 +98,34 @@ const getRevenueCatIntegrationDetected = () => {
   return {
     detected: true,
     hint: 'SDK key present for this platform (use a dev build, not Expo Go).',
+  };
+};
+
+/** Mirrors `lib/superwallBootstrap.ts` — public API key for the current platform. */
+const getSuperwallIntegrationDetected = () => {
+  if (Platform.OS === 'web') {
+    return {
+      detected: false,
+      hint: 'Native dev build only. Set platform keys for iOS/Android.',
+    };
+  }
+  const platformKey =
+    Platform.OS === 'ios'
+      ? envTrim(process.env.EXPO_PUBLIC_SUPERWALL_IOS_API_KEY)
+      : envTrim(process.env.EXPO_PUBLIC_SUPERWALL_ANDROID_API_KEY);
+  const fallback = envTrim(process.env.EXPO_PUBLIC_SUPERWALL_API_KEY);
+  if (!platformKey && !fallback) {
+    return {
+      detected: false,
+      hint:
+        Platform.OS === 'ios'
+          ? 'Set EXPO_PUBLIC_SUPERWALL_IOS_API_KEY (or EXPO_PUBLIC_SUPERWALL_API_KEY) in .env.'
+          : 'Set EXPO_PUBLIC_SUPERWALL_ANDROID_API_KEY (or EXPO_PUBLIC_SUPERWALL_API_KEY) in .env.',
+    };
+  }
+  return {
+    detected: true,
+    hint: 'API key present for this platform (use a dev build, not Expo Go).',
   };
 };
 
@@ -245,7 +279,7 @@ const ConfigScreen = () => {
             setConfig((prev) => ({
               ...prev,
               ...parsed,
-              apiBaseUrl: parsed.apiBaseUrl || DEFAULT_API_URL,
+              apiBaseUrl: resolveApiBaseUrlForPlatform(parsed.apiBaseUrl || DEFAULT_API_URL),
               useResolveFallback: parsed.useResolveFallback ?? true,
               hideFlowNavigationBar: parsed.hideFlowNavigationBar ?? false,
             }));
@@ -301,8 +335,13 @@ const ConfigScreen = () => {
 
   const start = async () => {
     if (!canStart) return;
-    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(config));
-    syncFromSavedConfig(config);
+    const normalized: SavedConfig = {
+      ...config,
+      apiBaseUrl: resolveApiBaseUrlForPlatform(config.apiBaseUrl),
+    };
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+    setConfig(normalized);
+    syncFromSavedConfig(normalized);
     router.push('/onboarding');
   };
 
@@ -329,6 +368,7 @@ const ConfigScreen = () => {
 
   const appsFlyerStatus = getAppsFlyerIntegrationDetected();
   const revenueCatStatus = getRevenueCatIntegrationDetected();
+  const superwallStatus = getSuperwallIntegrationDetected();
   const attrEntries = Object.entries(attrPreviewFlat).sort(([a], [b]) =>
     a.localeCompare(b),
   );
@@ -370,6 +410,11 @@ const ConfigScreen = () => {
             detected={revenueCatStatus.detected}
             hint={revenueCatStatus.hint}
           />
+          <IntegrationCheckRow
+            name="Superwall"
+            detected={superwallStatus.detected}
+            hint={superwallStatus.hint}
+          />
         </View>
 
         <AttributionPreviewPanel
@@ -408,7 +453,7 @@ const ConfigScreen = () => {
           value={config.apiBaseUrl}
           onChangeText={(v) => setConfig((c) => ({ ...c, apiBaseUrl: v }))}
           placeholder="https://api.getrheo.io"
-          hint="Default is production. Local API: iOS sim http://localhost:4000, Android emulator http://10.0.2.2:4000."
+          hint="Default is production. Local API: use http://localhost:4000 (Android emulator auto-maps to 10.0.2.2)."
         />
 
         <Field
