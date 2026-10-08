@@ -5,10 +5,10 @@ import { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Text, View, useColorScheme } from 'react-native';
 import {
   FlowTerminalSnapshot,
-  Flow,
   type EmailPasswordAuthHandlerPayload,
   type OAuthLoginHandlerPayload,
 } from '@getrheo/react-native-expo';
+import { ExampleChannelContent } from '../lib/exampleChannelContent';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { OfflineResolveFallback } from '../lib/offlineResolveFallback';
 import { prepareAppsFlyerForFlow } from '../lib/appsFlyerBootstrap';
@@ -99,6 +99,9 @@ const OnboardingRoute = () => {
 
   const handleEmailPasswordAuth = useCallback((p: EmailPasswordAuthHandlerPayload) => {
     console.log('[rheo-example] Email/password', p.mode, p.screenId);
+    // After collecting email + a marketing checkbox in your host UI:
+    // const config = useRheo();
+    // await identify({ email, marketingConsent: 'granted' }, config);
     setTimeout(() => {
       p.resolve({ success: true });
     }, 250);
@@ -128,17 +131,19 @@ const OnboardingRoute = () => {
 
   const flow = (
     <View style={{ flex: 1, width: '100%' }}>
-      <Flow
+      <ExampleChannelContent
         channelId={channelId}
-        theme={rheoTheme}
-        fallback={offlineFallback}
-        withGestureRoot={false}
-        locale="en"
-        onFlowCompleted={handleFlowCompleted}
-        onOAuthLogin={handleOAuthLogin}
-        onEmailPasswordAuth={handleEmailPasswordAuth}
-        externalSurfaces={{
-          external_1: ExternalSurfaceTest,
+        flowProps={{
+          theme: rheoTheme,
+          fallback: offlineFallback,
+          withGestureRoot: false,
+          locale: 'en',
+          onFlowCompleted: handleFlowCompleted,
+          onOAuthLogin: handleOAuthLogin,
+          onEmailPasswordAuth: handleEmailPasswordAuth,
+          externalSurfaces: {
+            external_1: ExternalSurfaceTest,
+          },
         }}
       />
     </View>

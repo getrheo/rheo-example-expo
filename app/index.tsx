@@ -442,7 +442,7 @@ const ConfigScreen = () => {
         />
 
         <Field
-          label="Channel id"
+          label="Channel id (flow or banner)"
           value={config.channelId}
           onChangeText={(v) => setConfig((c) => ({ ...c, channelId: v }))}
           placeholder="ch_test_..."
@@ -536,7 +536,7 @@ const ConfigScreen = () => {
               fontWeight: '700',
             }}
           >
-            Start flow
+            Start channel
           </Text>
         </Pressable>
 
