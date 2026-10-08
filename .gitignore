@@ -8,12 +8,12 @@ ios
 android
 
 # Native build outputs
-ios/Pods/
-ios/build/
-android/build/
-android/app/build/
-android/.gradle/
-android/.idea/
+*/ios/Pods/
+*/ios/build/
+*/android/build/
+*/android/app/build/
+*/android/.gradle/
+*/android/.idea/
 
 # Metro
 .metro-health-check*
